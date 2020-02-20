@@ -1,0 +1,43 @@
+#!/bin/bash
+gorusage() {
+    echo "usage: $0 <selector> <value> <which_api>"
+    echo
+    echo "selector = either 'id' or 'value'"
+    echo "value = uuid for selector type id, string for value"
+    echo "which_api = which api to query [aad,graph,exchange,sharepoint,teams]"
+    echo
+    echo "ex: $0 value Directory.Read.All graph"
+}
+if [[ -z "$2" ]];
+then
+    gorusage
+    exit 1
+fi
+selector=$1
+value=$2
+apptype=${3:-graph}
+
+case $apptype in
+    aad)
+        appid="00000002-0000-0000-c000-000000000000"
+        ;;
+    graph)
+        appid="00000003-0000-0000-c000-000000000000"
+        ;;
+    exchange)
+        appid="00000002-0000-0ff1-ce00-000000000000"
+        ;;
+    sharepoint)
+        appid="00000003-0000-0ff1-ce00-000000000000"
+        ;;
+    teams)
+        appid="cc15fd57-2c6c-4117-a88c-83b1d56b4bbe"
+        ;;
+    *)
+        echo "unknown"
+        exit 1
+        ;;
+esac
+
+echo "Searching for value in apptype $apptype ($appid)"
+az ad sp show --id $appid -o json | jq ".appRoles[]|select(.${selector}==\"${value}\")"
