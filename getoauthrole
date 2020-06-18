@@ -34,8 +34,7 @@ case $apptype in
         appid="cc15fd57-2c6c-4117-a88c-83b1d56b4bbe"
         ;;
     *)
-        echo "unknown"
-        exit 1
+        appid="$apptype"
         ;;
 esac
 
